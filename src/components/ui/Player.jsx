@@ -4,86 +4,61 @@ import { useState, useEffect } from 'react'
 import { api } from '@/lib/api'
 
 export default function Player({ streams = [] }) {
-  const [currentServer, setCurrentServer] = useState(null)
-  const [embedUrl, setEmbedUrl] = useState('')
+  const [current, setCurrent] = useState(null)
+  const [url, setUrl] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
 
   useEffect(() => {
-    if (streams.length > 0) {
-      setCurrentServer(streams[0])
-    }
+    if (streams.length > 0) setCurrent(streams[0])
   }, [streams])
 
   useEffect(() => {
-    const loadServer = async () => {
-      if (!currentServer) return
-      
+    if (!current) return
+    
+    const load = async () => {
       setLoading(true)
-      setError('')
-      
       try {
-        if (currentServer.server_id) {
-          const data = await api.getStreamServer(currentServer.server_id)
-          setEmbedUrl(data.embed_url || data.url)
+        if (current.server_id) {
+          const data = await api.getStreamServer(current.server_id)
+          setUrl(data.embed_url || data.url)
         } else {
-          setEmbedUrl(currentServer.embed_url || currentServer.url)
+          setUrl(current.embed_url || current.url)
         }
-      } catch (err) {
-        setError('Gagal memuat server. Coba server lain.')
+      } catch (e) {
+        console.error(e)
       } finally {
         setLoading(false)
       }
     }
+    load()
+  }, [current])
 
-    loadServer()
-  }, [currentServer])
-
-  if (!streams || streams.length === 0) {
-    return (
-      <div className="w-full aspect-video bg-[#12121A] rounded-xl flex items-center justify-center border border-[#1F1F2B]">
-        <p className="text-gray-400">Tidak ada server tersedia</p>
-      </div>
-    )
+  if (!streams.length) {
+    return <div className="aspect-video bg-[#12121A] rounded-xl flex items-center justify-center">No server</div>
   }
 
   return (
-    <div className="space-y-4">
-      {/* Player Frame */}
-      <div className="relative w-full aspect-video bg-black rounded-xl overflow-hidden border border-[#1F1F2B]">
+    <div className="space-y-2">
+      <div className="aspect-video bg-black rounded-xl overflow-hidden border border-[#1F1F2B]">
         {loading ? (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#12121A]">
-            <div className="w-8 h-8 border-2 border-[#3B82F6] border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="w-6 h-6 border-2 border-[#3B82F6] border-t-transparent rounded-full animate-spin"></div>
           </div>
-        ) : error ? (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#12121A]">
-            <p className="text-red-400">{error}</p>
-          </div>
-        ) : embedUrl ? (
-          <iframe
-            src={embedUrl}
-            className="w-full h-full"
-            frameBorder="0"
-            allowFullScreen
-            allow="autoplay; encrypted-media"
-            title="Video Player"
-          />
+        ) : url ? (
+          <iframe src={url} className="w-full h-full" allowFullScreen />
         ) : null}
       </div>
-
-      {/* Server Selector */}
-      <div className="flex flex-wrap gap-2">
-        {streams.map((server, index) => (
+      
+      <div className="flex gap-1">
+        {streams.map((s, i) => (
           <button
-            key={index}
-            onClick={() => setCurrentServer(server)}
-            className={`px-4 py-2 rounded-lg text-sm transition ${
-              currentServer?.name === server.name
-                ? 'bg-[#3B82F6] text-white'
-                : 'bg-[#1F1F2B] text-gray-300 hover:bg-[#2A2A35]'
+            key={i}
+            onClick={() => setCurrent(s)}
+            className={`px-3 py-1 text-xs rounded ${
+              current?.name === s.name ? 'bg-[#3B82F6]' : 'bg-[#1F1F2B]'
             }`}
           >
-            {server.name}
+            {s.name}
           </button>
         ))}
       </div>
