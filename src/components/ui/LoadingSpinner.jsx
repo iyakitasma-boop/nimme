@@ -1,15 +1,7 @@
-export default function LoadingSpinner({ fullScreen = false }) {
-  if (fullScreen) {
-    return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-        <div className="loader"></div>
-      </div>
-    )
-  }
-
+export default function LoadingSpinner() {
   return (
-    <div className="flex items-center justify-center p-8">
-      <div className="loader"></div>
+    <div className="flex justify-center items-center p-8">
+      <div className="w-6 h-6 border-2 border-[#3B82F6] border-t-transparent rounded-full animate-spin"></div>
     </div>
   )
 }
