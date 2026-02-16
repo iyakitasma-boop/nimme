@@ -2,27 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  
-  body {
-    @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
-  }
-}
-
 :root {
-  --background: #0B0B0F;
-  --foreground: #FFFFFF;
-  --primary: #3B82F6;
-  --primary-dark: #2563EB;
+  --bg: #0B0B0F;
   --card: #12121A;
   --border: #1F1F2B;
+  --primary: #3B82F6;
 }
 
-/* Custom Scrollbar - Minimal */
+body {
+  background-color: var(--bg);
+  background-image: radial-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+/* Scrollbar minimal */
 ::-webkit-scrollbar {
   width: 4px;
   height: 4px;
@@ -37,22 +30,11 @@
   border-radius: 4px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #3B82F6;
+/* Hide scrollbar for clean look */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
-
-/* Smooth Hover Effects */
-.hover-lift {
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.hover-lift:hover {
-  transform: translateY(-2px);
-}
-
-/* Text Gradient Minimal */
-.text-gradient {
-  background: linear-gradient(135deg, #60A5FA, #A78BFA);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
